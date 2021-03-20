@@ -1,12 +1,12 @@
 # Commands
 ## help
 
-show all commands or detailed help of one command
+Show all commands or the detailed help of one command.
 * **Cooldown:** N/A
 * **Required Permission:** N/A
 * **Required Role:** N/A
 #### Arguments
-* `-p`, `--page` : select a specific page to showcase
+* `-p`, `--page` : select a specific page to showcase.
 
 #### Usage
 ## setup
