@@ -81,9 +81,7 @@ public class Setup {
   }
 
   private void createChannel(Category category, CategoryRequest args, int maxBitRate) {
-    int voiceChannels = category.getVoiceChannels().size();
-    if (voiceChannels == 0
-        || ChannelUtility.getOccupiedVoiceChannels(category) < voiceChannels - 2) {
+    if (!ChannelUtility.voiceChannelExists(args.channel, category)) {
       category.createVoiceChannel(args.channel).setUserlimit(args.maxUsers).setBitrate(maxBitRate)
           .queue();
     }

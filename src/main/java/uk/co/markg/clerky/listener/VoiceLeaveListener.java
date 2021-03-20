@@ -45,12 +45,12 @@ public class VoiceLeaveListener extends ListenerAdapter {
     if (parent == null) {
       return false;
     }
-    int allChannels = parent.getVoiceChannels().size();
-    logger.info(ChannelUtility.getOccupiedVoiceChannels(parent));
+    int allChannels = ChannelUtility.getValidChannelCount(config.getChannelName(), parent);
+    logger.info(ChannelUtility.getOccupiedVoiceChannels(config.getChannelName(), parent));
     return channelLeft.getName().equals(config.getChannelName())
         && channelLeft.getMembers().isEmpty() && allChannels > 1
         && parent.getName().equals(config.getCategoryName())
-        && ChannelUtility.getOccupiedVoiceChannels(parent) <= allChannels - 2;
+        && ChannelUtility.getOccupiedVoiceChannels(config.getChannelName(), parent) <= allChannels - 2;
   }
 
 }
