@@ -6,7 +6,7 @@ Once added, you only need to run the setup command once.
 
 `clerky!setup -c "Your Category" -n 5 -u 3 --channel "Your Channel Name"`
 
-## Permsisions Required
+## Permissions Required
 
 • Manage Channels
 
