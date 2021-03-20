@@ -46,7 +46,7 @@ public class Setup {
   @Cooldown(amount = 10, unit = ChronoUnit.SECONDS, scope = CooldownScope.USER,
       messageStrategy = MessageStrategy.REACT)
   @CommandHandler(commandName = "setup", description = "Setup voice category",
-      perms = AbstractPermission.ADMINISTRATOR)
+      perms = AbstractPermission.BAN_MEMBERS)
   @Usage(usage = "-c \"Study Rooms\" -u 3 -n 7 --channel \"Study Room\"",
       description = "Will setup the room management with a maximum of 7 channels with 3 users per channel")
   public void setup(DiscordRequest request, CategoryRequest args) {

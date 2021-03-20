@@ -13,7 +13,7 @@ show all commands or detailed help of one command
 
 Setup voice category
 * **Cooldown:** 10 seconds per user
-* **Required Permission:** N/A
+* **Required Permission:** BAN_MEMBERS
 * **Required Role:** N/A
 #### Arguments
 * `-c`, `--category` : The name of the channel category to hold voice channels
