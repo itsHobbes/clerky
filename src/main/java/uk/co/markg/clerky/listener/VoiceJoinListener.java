@@ -19,7 +19,8 @@ public class VoiceJoinListener extends ListenerAdapter {
     logger.info("Joined channel {}", joinedChannel.getName());
 
     if (ChannelUtility.isCreationConditionMet(config, joinedChannel, parent)) {
-      parent.createVoiceChannel(config.getChannelName()).setUserlimit(config.getMaxUsers()).queue();
+      parent.createVoiceChannel(config.getChannelName()).setUserlimit(config.getMaxUsers())
+          .setBitrate(event.getGuild().getMaxBitrate()).queue();
     }
   }
 

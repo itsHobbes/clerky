@@ -64,7 +64,8 @@ public class Setup {
   }
 
   private void execute(DiscordRequest request, CategoryRequest args) {
-    findCategory(request, args).ifPresentOrElse(category -> createChannel(category, args),
+    findCategory(request, args).ifPresentOrElse(
+        category -> createChannel(category, args, request.getEvent().getGuild().getMaxBitrate()),
         () -> createCategory(request.getEvent(), args));
 
     long serverid = request.getEvent().getGuild().getIdLong();
@@ -76,14 +77,15 @@ public class Setup {
 
   private void createCategory(MessageReceivedEvent event, CategoryRequest args) {
     Category c = event.getGuild().createCategory(args.category).setPosition(0).complete();
-    createChannel(c, args);
+    createChannel(c, args, event.getGuild().getMaxBitrate());
   }
 
-  private void createChannel(Category category, CategoryRequest args) {
+  private void createChannel(Category category, CategoryRequest args, int maxBitRate) {
     int voiceChannels = category.getVoiceChannels().size();
     if (voiceChannels == 0
         || ChannelUtility.getOccupiedVoiceChannels(category) < voiceChannels - 2) {
-      category.createVoiceChannel(args.channel).setUserlimit(args.maxUsers).queue();
+      category.createVoiceChannel(args.channel).setUserlimit(args.maxUsers).setBitrate(maxBitRate)
+          .queue();
     }
   }
 
