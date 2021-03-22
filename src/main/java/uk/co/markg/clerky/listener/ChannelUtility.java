@@ -55,7 +55,8 @@ public class ChannelUtility {
   }
 
   public static void createChannel(Category parent, String channelName, int maxUsers, int bitRate) {
-    parent.createVoiceChannel(channelName).setUserlimit(maxUsers).setBitrate(bitRate).queue();
+    parent.createVoiceChannel(channelName).setUserlimit(maxUsers).setBitrate(bitRate)
+        .syncPermissionOverrides().queue();
   }
 
 }
