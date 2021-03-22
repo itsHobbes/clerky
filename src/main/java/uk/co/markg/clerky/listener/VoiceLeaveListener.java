@@ -29,7 +29,7 @@ public class VoiceLeaveListener extends ListenerAdapter {
     var joinedChannel = event.getChannelJoined();
     var parent = joinedChannel.getParent();
     if (ChannelUtility.isCreationConditionMet(config, joinedChannel, parent)) {
-      parent.createVoiceChannel(config.getChannelName()).setUserlimit(config.getMaxUsers()).queue();
+      ChannelUtility.createChannel(parent, config, event.getGuild().getMaxBitrate());
     }
   }
 
@@ -42,15 +42,15 @@ public class VoiceLeaveListener extends ListenerAdapter {
 
   private boolean isRemovalConditionMet(VoiceChannel channelLeft, Category parent,
       ServerConfig config) {
+    // parent can be null if a user enters a voice channel that does not have a category.
     if (parent == null) {
       return false;
     }
     int allChannels = ChannelUtility.getValidChannelCount(config.getChannelName(), parent);
-    logger.info(ChannelUtility.getOccupiedVoiceChannels(config.getChannelName(), parent));
+    int occupiedChannels = ChannelUtility.getOccupiedVoiceChannels(config.getChannelName(), parent);
     return channelLeft.getName().equals(config.getChannelName())
         && channelLeft.getMembers().isEmpty() && allChannels > 1
-        && parent.getName().equals(config.getCategoryName())
-        && ChannelUtility.getOccupiedVoiceChannels(config.getChannelName(), parent) <= allChannels - 2;
+        && parent.getName().equals(config.getCategoryName()) && occupiedChannels <= allChannels - 2;
   }
 
 }

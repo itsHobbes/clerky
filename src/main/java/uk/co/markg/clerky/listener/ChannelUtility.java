@@ -50,4 +50,12 @@ public class ChannelUtility {
         && totalExistingValidChannels - occupiedChannels == 0;
   }
 
+  public static void createChannel(Category parent, ServerConfig config, int bitRate) {
+    createChannel(parent, config.getChannelName(), config.getMaxUsers(), bitRate);
+  }
+
+  public static void createChannel(Category parent, String channelName, int maxUsers, int bitRate) {
+    parent.createVoiceChannel(channelName).setUserlimit(maxUsers).setBitrate(bitRate).queue();
+  }
+
 }
