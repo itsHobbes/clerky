@@ -52,7 +52,7 @@ public class Setup {
   public void setup(DiscordRequest request, CategoryRequest args) {
 
     if (args.maxUsers > 99 || args.maxUsers <= 0) {
-      request.getEvent().getChannel().sendMessage(USER_ERROR);
+      request.getEvent().getChannel().sendMessage(USER_ERROR).queue();
       return;
     }
 
