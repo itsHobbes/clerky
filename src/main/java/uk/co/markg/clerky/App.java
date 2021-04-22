@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import uk.co.markg.clerky.listener.MentionListener;
 import uk.co.markg.clerky.listener.VoiceJoinListener;
 import uk.co.markg.clerky.listener.VoiceLeaveListener;
 
@@ -24,7 +25,8 @@ public class App {
 
     var builder = Dispatcher.init(JDABuilder.create(System.getenv("CLERKY_TOKEN"), getIntents()),
         dispatcherBuilder.build());
-    builder.addEventListeners(new VoiceJoinListener(), new VoiceLeaveListener());
+    builder.addEventListeners(new VoiceJoinListener(), new VoiceLeaveListener(),
+        new MentionListener());
     builder.disableCache(getFlags());
     builder.enableCache(CacheFlag.VOICE_STATE);
     builder.build().awaitReady();
