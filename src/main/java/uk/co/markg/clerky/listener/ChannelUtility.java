@@ -2,8 +2,8 @@ package uk.co.markg.clerky.listener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import net.dv8tion.jda.api.entities.Category;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import uk.co.markg.clerky.data.ServerConfig;
 
 public class ChannelUtility {

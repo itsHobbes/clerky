@@ -1,35 +1,39 @@
 package uk.co.markg.clerky;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import disparse.discord.jda.Dispatcher;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import uk.co.markg.clerky.listener.MentionListener;
-import uk.co.markg.clerky.listener.VoiceJoinListener;
-import uk.co.markg.clerky.listener.VoiceLeaveListener;
+import uk.co.markg.clerky.listener.SlashCommand;
+import uk.co.markg.clerky.listener.VoiceListener;
 
 public class App {
 
   public static final String PREFIX = "clerky!";
 
   public static void main(String[] args) throws Exception {
-    Dispatcher.Builder dispatcherBuilder = new Dispatcher.Builder(App.class).prefix(PREFIX)
-        .pageLimit(10).withHelpBaseEmbed(() -> new EmbedBuilder().setColor(Color.decode("#eb7701")))
-        .description("I manage voice channels")
-        .autogenerateReadmeWithNameAndPath("", "COMMANDS.md");
 
-    var builder = Dispatcher.init(JDABuilder.create(System.getenv("CLERKY_TOKEN"), getIntents()),
-        dispatcherBuilder.build());
-    builder.addEventListeners(new VoiceJoinListener(), new VoiceLeaveListener(),
-        new MentionListener());
+    var builder = JDABuilder.create(System.getenv("CLERKY_TOKEN"), getIntents());
+    builder.addEventListeners(new VoiceListener(), new MentionListener(), new SlashCommand());
     builder.disableCache(getFlags());
     builder.enableCache(CacheFlag.VOICE_STATE);
-    builder.build().awaitReady();
+    var jda = builder.build();
+    jda.awaitReady();
+    jda.updateCommands().addCommands(Commands.slash("setup", "Clerky Setup")
+        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS))
+        .setGuildOnly(true)
+        .addOption(OptionType.STRING, "category", "The category name as a string to hold voice channels", true)
+        .addOption(OptionType.STRING, "channel", "The name of the voice channels", true)
+        .addOption(OptionType.INTEGER, "maxusers", "The max number of users per voice channel",
+            true)
+        .addOption(OptionType.INTEGER, "maxchannels", "The max number of channels", true)).queue();
   }
 
   private static List<GatewayIntent> getIntents() {
@@ -43,7 +47,7 @@ public class App {
     List<CacheFlag> flags = new ArrayList<>();
     flags.add(CacheFlag.ACTIVITY);
     flags.add(CacheFlag.CLIENT_STATUS);
-    flags.add(CacheFlag.EMOTE);
+    flags.add(CacheFlag.EMOJI);
     return EnumSet.copyOf(flags);
   }
 

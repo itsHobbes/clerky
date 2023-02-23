@@ -1,18 +1,9 @@
 package uk.co.markg.clerky.command;
 
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
-import disparse.discord.AbstractPermission;
-import disparse.discord.jda.DiscordRequest;
-import disparse.parser.dispatch.CooldownScope;
-import disparse.parser.reflection.CommandHandler;
-import disparse.parser.reflection.Cooldown;
-import disparse.parser.reflection.Flag;
-import disparse.parser.reflection.MessageStrategy;
-import disparse.parser.reflection.ParsedEntity;
-import disparse.parser.reflection.Usage;
-import net.dv8tion.jda.api.entities.Category;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.entities.channel.concrete.Category;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import uk.co.markg.clerky.data.Config;
 import uk.co.markg.clerky.data.ServerConfig;
 import uk.co.markg.clerky.listener.ChannelUtility;
@@ -24,74 +15,57 @@ public class Setup {
   private static final String CHANNEL_ERROR =
       "Max channels must be greater than 0 and less than or equal to 50";
 
-  @ParsedEntity
-  static class CategoryRequest {
-    @Flag(shortName = 'c', longName = "category",
-        description = "The name of the channel category to hold voice channels", required = true)
-    String category = "";
+  public static void execute(SlashCommandInteractionEvent event) {
 
-    @Flag(longName = "channel",
-        description = "The name created channels should use. (Default: Study Room)")
-    String channel = "Study Room";
+    var categoryName = event.getOption("category", OptionMapping::getAsString);
+    var channel = event.getOption("channel", OptionMapping::getAsString);
+    var maxUsers = event.getOption("maxusers", OptionMapping::getAsInt);
+    var maxChannels = event.getOption("maxchannels", OptionMapping::getAsInt);
 
-    @Flag(shortName = 'u', longName = "users",
-        description = "Max users allowed per channel. (Default: 3)")
-    int maxUsers = 3;
-
-    @Flag(shortName = 'n', longName = "channels",
-        description = "Max channels allowed per channel. (Default: 10)")
-    int maxChannels = 10;
-  }
-
-  @Cooldown(amount = 10, unit = ChronoUnit.SECONDS, scope = CooldownScope.USER,
-      messageStrategy = MessageStrategy.REACT)
-  @CommandHandler(commandName = "setup", description = "Setup voice category",
-      perms = AbstractPermission.BAN_MEMBERS)
-  @Usage(usage = "-c \"Study Rooms\" -u 3 -n 7 --channel \"Study Room\"",
-      description = "Will setup the room management with a maximum of 7 channels with 3 users per channel")
-  public void setup(DiscordRequest request, CategoryRequest args) {
-
-    if (args.maxUsers > 99 || args.maxUsers <= 0) {
-      request.getEvent().getChannel().sendMessage(USER_ERROR).queue();
+    if (maxUsers > 99 || maxUsers <= 0) {
+      event.reply(USER_ERROR).queue();
       return;
     }
 
-    if (args.maxChannels > 50 || args.maxChannels <= 0) {
-      request.getEvent().getChannel().sendMessage(CHANNEL_ERROR).queue();
+    if (maxChannels > 50 || maxChannels <= 0) {
+      event.reply(CHANNEL_ERROR).queue();
+      return;
     }
 
-    execute(request, args);
-  }
+    event.deferReply().queue();
 
-  private void execute(DiscordRequest request, CategoryRequest args) {
-    findCategory(request, args).ifPresentOrElse(
-        category -> createChannel(category, args, request.getEvent().getGuild().getMaxBitrate()),
-        () -> createCategory(request.getEvent(), args));
+    findCategory(event, categoryName).ifPresentOrElse(
+        category -> createChannel(category, channel, maxUsers, event.getGuild().getMaxBitrate()),
+        () -> createCategory(event, categoryName, channel, maxUsers));
 
-    long serverid = request.getEvent().getGuild().getIdLong();
+    long serverid = event.getGuild().getIdLong();
 
     var config = Config.load();
-    config.save(serverid,
-        new ServerConfig(args.category, args.channel, args.maxUsers, args.maxChannels));
+    config.save(serverid, new ServerConfig(categoryName, channel, maxUsers, maxChannels));
+
+    event.getHook().editOriginal("Config set").queue();
   }
 
-  private void createCategory(MessageReceivedEvent event, CategoryRequest args) {
-    Category c = event.getGuild().createCategory(args.category).setPosition(0).complete();
-    createChannel(c, args, event.getGuild().getMaxBitrate());
+  private static void createCategory(SlashCommandInteractionEvent event, String categoryName,
+      String channel, int maxUsers) {
+    Category c = event.getGuild().createCategory(categoryName).setPosition(0).complete();
+    createChannel(c, channel, maxUsers, event.getGuild().getMaxBitrate());
   }
 
-  private void createChannel(Category category, CategoryRequest args, int maxBitRate) {
-    if (!ChannelUtility.voiceChannelExists(args.channel, category)) {
-      ChannelUtility.createChannel(category, args.channel, args.maxUsers, maxBitRate);
+  private static void createChannel(Category category, String channel, int maxUsers,
+      int maxBitRate) {
+    if (!ChannelUtility.voiceChannelExists(channel, category)) {
+      ChannelUtility.createChannel(category, channel, maxUsers, maxBitRate);
     }
   }
 
-  public Optional<Category> findCategory(DiscordRequest request, CategoryRequest args) {
-    var guild = request.getEvent().getGuild();
-    var categories = guild.getCategoriesByName(args.category, true);
-    for (var category : categories) {
-      if (category.getName().equals(args.category)) {
-        return Optional.of(category);
+  public static Optional<Category> findCategory(SlashCommandInteractionEvent event,
+      String categoryName) {
+    var guild = event.getGuild();
+    var categories = guild.getCategoriesByName(categoryName, true);
+    for (var cat : categories) {
+      if (cat.getName().equals(categoryName)) {
+        return Optional.of(cat);
       }
     }
     return Optional.empty();
