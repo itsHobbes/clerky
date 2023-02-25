@@ -6,7 +6,6 @@ import java.util.Optional;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
@@ -21,13 +20,36 @@ public class Setup implements Command {
       "Max users must be greater than 0 and less than or equal to 99";
   private static final String CHANNEL_ERROR =
       "Max channels must be greater than 0 and less than or equal to 50";
+  private static final String CATEGORY_ARG = "category";
+  private static final String CHANNEL_ARG = "channel";
+  private static final String MAX_USERS_ARG = "maxusers";
+  private static final String MAX_CHANNELS_ARG = "maxchannels";
+
+  @Override
+  public List<Permission> getPermissions() {
+    return List.of(Permission.BAN_MEMBERS);
+  }
+
+  @Override
+  public List<OptionData> defineOptions() {
+    List<OptionData> options = new ArrayList<>();
+    options.add(new OptionData(OptionType.STRING, CATEGORY_ARG,
+        "The category name as a string to hold voice channels", true));
+    options.add(
+        new OptionData(OptionType.STRING, CHANNEL_ARG, "The name of the voice channels", true));
+    options.add(new OptionData(OptionType.STRING, MAX_USERS_ARG,
+        "The max number of users per voice channel", true));
+    options.add(
+        new OptionData(OptionType.STRING, MAX_CHANNELS_ARG, "The max number of channels", true));
+    return options;
+  }
 
   @Override
   public void execute(SlashCommandInteractionEvent event) {
-    var categoryName = event.getOption("category", OptionMapping::getAsString);
-    var channel = event.getOption("channel", OptionMapping::getAsString);
-    var maxUsers = event.getOption("maxusers", OptionMapping::getAsInt);
-    var maxChannels = event.getOption("maxchannels", OptionMapping::getAsInt);
+    var categoryName = event.getOption(CATEGORY_ARG, OptionMapping::getAsString);
+    var channel = event.getOption(CHANNEL_ARG, OptionMapping::getAsString);
+    var maxUsers = event.getOption(MAX_USERS_ARG, OptionMapping::getAsInt);
+    var maxChannels = event.getOption(MAX_CHANNELS_ARG, OptionMapping::getAsInt);
 
     if (maxUsers > 99 || maxUsers <= 0) {
       event.reply(USER_ERROR).queue();
@@ -75,25 +97,4 @@ public class Setup implements Command {
     }
     return Optional.empty();
   }
-
-  @Override
-  public DefaultMemberPermissions definePermissions() {
-    return DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS);
-  }
-
-  @Override
-  public List<OptionData> defineOptions() {
-    List<OptionData> options = new ArrayList<>();
-    options.add(new OptionData(OptionType.STRING, "category",
-        "The category name as a string to hold voice channels", true));
-    options
-        .add(new OptionData(OptionType.STRING, "channel", "The name of the voice channels", true));
-    options.add(new OptionData(OptionType.STRING, "maxusers",
-        "The max number of users per voice channel", true));
-    options
-        .add(new OptionData(OptionType.STRING, "maxchannels", "The max number of channels", true));
-
-    return options;
-  }
-
 }
