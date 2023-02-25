@@ -7,7 +7,7 @@ import org.apache.logging.log4j.Logger;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import uk.co.markg.clerky.command.Setup;
+import uk.co.markg.clerky.command.AddVoiceGroup;
 
 public class SlashCommand extends ListenerAdapter {
 
@@ -16,14 +16,14 @@ public class SlashCommand extends ListenerAdapter {
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
     switch (event.getName()) {
-      case "setup":
-        var command = new Setup();
+      case "addVoiceGroup":
+        var command = new AddVoiceGroup();
         logger.info("setup triggered");
 
         if (!hasPermission(event.getMember().getPermissions(), command.getPermissions())) {
           event.reply("You don't have permission to use this command");
         }
-        new Setup().execute(event);
+        new AddVoiceGroup().execute(event);
         break;
       default:
         break;

@@ -13,8 +13,8 @@ import uk.co.markg.clerky.data.Config;
 import uk.co.markg.clerky.data.ServerConfig;
 import uk.co.markg.clerky.listener.ChannelUtility;
 
-@CommandInfo(name = "setup", description = "Clerky Setup")
-public class Setup implements Command {
+@CommandInfo(name = "addVoiceGroup", description = "Add a voice group")
+public class AddVoiceGroup implements Command {
 
   private static final String USER_ERROR =
       "Max users must be greater than 0 and less than or equal to 99";
