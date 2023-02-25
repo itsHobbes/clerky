@@ -1,22 +1,29 @@
 package uk.co.markg.clerky.command;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import uk.co.markg.clerky.data.Config;
 import uk.co.markg.clerky.data.ServerConfig;
 import uk.co.markg.clerky.listener.ChannelUtility;
 
-public class Setup {
+@CommandInfo(name = "setup", description = "Clerky Setup")
+public class Setup implements Command {
 
   private static final String USER_ERROR =
       "Max users must be greater than 0 and less than or equal to 99";
   private static final String CHANNEL_ERROR =
       "Max channels must be greater than 0 and less than or equal to 50";
 
-  public static void execute(SlashCommandInteractionEvent event) {
-
+  @Override
+  public void execute(SlashCommandInteractionEvent event) {
     var categoryName = event.getOption("category", OptionMapping::getAsString);
     var channel = event.getOption("channel", OptionMapping::getAsString);
     var maxUsers = event.getOption("maxusers", OptionMapping::getAsInt);
@@ -46,21 +53,19 @@ public class Setup {
     event.getHook().editOriginal("Config set").queue();
   }
 
-  private static void createCategory(SlashCommandInteractionEvent event, String categoryName,
+  private void createCategory(SlashCommandInteractionEvent event, String categoryName,
       String channel, int maxUsers) {
     Category c = event.getGuild().createCategory(categoryName).setPosition(0).complete();
     createChannel(c, channel, maxUsers, event.getGuild().getMaxBitrate());
   }
 
-  private static void createChannel(Category category, String channel, int maxUsers,
-      int maxBitRate) {
+  private void createChannel(Category category, String channel, int maxUsers, int maxBitRate) {
     if (!ChannelUtility.voiceChannelExists(channel, category)) {
       ChannelUtility.createChannel(category, channel, maxUsers, maxBitRate);
     }
   }
 
-  public static Optional<Category> findCategory(SlashCommandInteractionEvent event,
-      String categoryName) {
+  public Optional<Category> findCategory(SlashCommandInteractionEvent event, String categoryName) {
     var guild = event.getGuild();
     var categories = guild.getCategoriesByName(categoryName, true);
     for (var cat : categories) {
@@ -69,6 +74,26 @@ public class Setup {
       }
     }
     return Optional.empty();
+  }
+
+  @Override
+  public DefaultMemberPermissions definePermissions() {
+    return DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS);
+  }
+
+  @Override
+  public List<OptionData> defineOptions() {
+    List<OptionData> options = new ArrayList<>();
+    options.add(new OptionData(OptionType.STRING, "category",
+        "The category name as a string to hold voice channels", true));
+    options
+        .add(new OptionData(OptionType.STRING, "channel", "The name of the voice channels", true));
+    options.add(new OptionData(OptionType.STRING, "maxusers",
+        "The max number of users per voice channel", true));
+    options
+        .add(new OptionData(OptionType.STRING, "maxchannels", "The max number of channels", true));
+
+    return options;
   }
 
 }

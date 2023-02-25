@@ -19,7 +19,7 @@ public class SlashCommand extends ListenerAdapter {
         if (!event.getMember().hasPermission(Permission.BAN_MEMBERS)) {
           event.reply("You don't have permission to use this command");
         }
-        Setup.execute(event);
+        new Setup().execute(event);
         break;
       default:
         break;

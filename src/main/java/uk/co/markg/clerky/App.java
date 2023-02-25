@@ -1,15 +1,22 @@
 package uk.co.markg.clerky;
 
+import static org.reflections.scanners.Scanners.SubTypes;
+import static org.reflections.scanners.Scanners.TypesAnnotated;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
+import org.reflections.Reflections;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.interactions.commands.DefaultMemberPermissions;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import uk.co.markg.clerky.command.Command;
+import uk.co.markg.clerky.command.CommandInfo;
 import uk.co.markg.clerky.listener.MentionListener;
 import uk.co.markg.clerky.listener.SlashCommand;
 import uk.co.markg.clerky.listener.VoiceListener;
@@ -26,14 +33,34 @@ public class App {
     builder.enableCache(CacheFlag.VOICE_STATE);
     var jda = builder.build();
     jda.awaitReady();
-    jda.updateCommands().addCommands(Commands.slash("setup", "Clerky Setup")
-        .setDefaultPermissions(DefaultMemberPermissions.enabledFor(Permission.BAN_MEMBERS))
-        .setGuildOnly(true)
-        .addOption(OptionType.STRING, "category", "The category name as a string to hold voice channels", true)
-        .addOption(OptionType.STRING, "channel", "The name of the voice channels", true)
-        .addOption(OptionType.INTEGER, "maxusers", "The max number of users per voice channel",
-            true)
-        .addOption(OptionType.INTEGER, "maxchannels", "The max number of channels", true)).queue();
+
+    var reflections = new Reflections("uk.co.markg.clerky");
+    Set<Class<?>> annotated =
+        reflections.get(SubTypes.of(TypesAnnotated.with(CommandInfo.class)).asClass());
+
+    List<CommandData> commands = new ArrayList<>();
+
+    for (Class<?> clazz : annotated) {
+      try {
+        var commandClass = clazz.asSubclass(Command.class);
+        var commandData = commandClass.getAnnotation(CommandInfo.class);
+        Command command = commandClass.getDeclaredConstructor().newInstance();
+
+        var commandBuilder = Commands.slash(commandData.name(), commandData.description())
+            .setGuildOnly(commandData.guildOnly())
+            .setDefaultPermissions(command.definePermissions());
+
+        if (!command.defineOptions().isEmpty()) {
+          commandBuilder.addOptions(command.defineOptions());
+        }
+        commands.add(commandBuilder);
+        System.out.printf("Registered %s%n", commandData);
+      } catch (ClassCastException e) {
+        System.err.printf("%s does not implement %s%n", clazz, Command.class);
+      }
+    }
+
+    jda.updateCommands().addCommands(commands).queue();
   }
 
   private static List<GatewayIntent> getIntents() {

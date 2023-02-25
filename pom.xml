@@ -23,6 +23,7 @@
         <log4j.version>2.20.0</log4j.version>
         <log4j-slf.version>2.18.0</log4j-slf.version>
         <jackson.version>2.14.2</jackson.version>
+        <reflections.version>0.10.2</reflections.version>
         
         <!-- Plugin versions -->
         <maven.shade>3.2.2</maven.shade>
@@ -61,6 +62,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
+            <version>${reflections.version}</version>
         </dependency>
     
         <!-- Testing dependencies-->
