@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import uk.co.markg.clerky.command.AddVoiceGroup;
+import uk.co.markg.clerky.command.GiveawayStart;
 
 public class SlashCommand extends ListenerAdapter {
 
@@ -15,19 +16,23 @@ public class SlashCommand extends ListenerAdapter {
 
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-    switch (event.getName()) {
-      case "addVoiceGroup":
-        var command = new AddVoiceGroup();
-        logger.info("setup triggered");
+    var command = switch (event.getName()) {
+      case "addvoicegroup" -> new AddVoiceGroup();
+      case "giveawaystart" -> new GiveawayStart();
+      default -> null;
+    };
 
-        if (!hasPermission(event.getMember().getPermissions(), command.getPermissions())) {
-          event.reply("You don't have permission to use this command");
-        }
-        new AddVoiceGroup().execute(event);
-        break;
-      default:
-        break;
+    if (command == null) {
+      return;
     }
+    logger.info("{} command triggered", command.getClass().getCanonicalName());
+
+    if (!hasPermission(event.getMember().getPermissions(), command.getPermissions())) {
+      event.reply("You don't have permission to use this command");
+      return;
+    }
+
+    command.execute(event);
   }
 
   private boolean hasPermission(EnumSet<Permission> memberPermissions,

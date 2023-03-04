@@ -35,8 +35,12 @@ public class App {
     Set<Class<?>> annotated =
         reflections.get(SubTypes.of(TypesAnnotated.with(CommandInfo.class)).asClass());
 
-    List<CommandData> commands = new ArrayList<>();
+    List<CommandData> commands = findSlashCommands(annotated);
+    jda.updateCommands().addCommands(commands).queue();
+  }
 
+  private static List<CommandData> findSlashCommands(Set<Class<?>> annotated) {
+    List<CommandData> commands = new ArrayList<>();
     for (Class<?> clazz : annotated) {
       try {
         var commandClass = clazz.asSubclass(Command.class);
@@ -52,12 +56,11 @@ public class App {
         }
         commands.add(commandBuilder);
         System.out.printf("Registered %s%n", commandData);
-      } catch (ClassCastException e) {
+      } catch (ReflectiveOperationException e) {
         System.err.printf("%s does not implement %s%n", clazz, Command.class);
       }
     }
-
-    jda.updateCommands().addCommands(commands).queue();
+    return commands;
   }
 
   private static List<GatewayIntent> getIntents() {
