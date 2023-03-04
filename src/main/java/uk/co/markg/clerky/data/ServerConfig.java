@@ -29,7 +29,7 @@ public class ServerConfig {
   /**
    * @return the voiceConfig
    */
-  public List<VoiceGroupConfig> getVoiceConfig() {
+  public List<VoiceGroupConfig> getVoiceConfigs() {
     return voiceConfig;
   }
 

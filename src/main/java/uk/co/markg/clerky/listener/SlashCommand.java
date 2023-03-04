@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import uk.co.markg.clerky.command.AddVoiceGroup;
 import uk.co.markg.clerky.command.GiveawayStart;
+import uk.co.markg.clerky.command.ListVoiceGroup;
 
 public class SlashCommand extends ListenerAdapter {
 
@@ -19,10 +20,12 @@ public class SlashCommand extends ListenerAdapter {
     var command = switch (event.getName()) {
       case "addvoicegroup" -> new AddVoiceGroup();
       case "giveawaystart" -> new GiveawayStart();
+      case "listvoicegroups" -> new ListVoiceGroup();
       default -> null;
     };
 
     if (command == null) {
+      logger.warn("{} triggered with no execution available", event.getName());
       return;
     }
     logger.info("{} command triggered", command.getClass().getCanonicalName());

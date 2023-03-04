@@ -16,7 +16,6 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import uk.co.markg.clerky.command.Command;
 import uk.co.markg.clerky.command.CommandInfo;
 import uk.co.markg.clerky.data.Config;
-import uk.co.markg.clerky.data.ServerConfig;
 import uk.co.markg.clerky.listener.MentionListener;
 import uk.co.markg.clerky.listener.SlashCommand;
 import uk.co.markg.clerky.listener.VoiceListener;

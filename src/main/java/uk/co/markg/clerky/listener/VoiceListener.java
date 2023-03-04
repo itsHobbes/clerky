@@ -37,9 +37,6 @@ public class VoiceListener extends ListenerAdapter {
 
     logger.info("Joined channel {}", joinedChannel.getName());
 
-    // if (ChannelUtility.isCreationConditionMet(config, joinedChannel, parent)) {
-    // ChannelUtility.createChannel(parent, config, event.getGuild().getMaxBitrate());
-    // }
     createChannel(config, parent, joinedChannel, event.getGuild().getMaxBitrate());
   }
 
@@ -62,9 +59,6 @@ public class VoiceListener extends ListenerAdapter {
     var config = Config.load().get(event.getGuild().getIdLong())
         .findVoiceGroupConfigByCategory(parent.getName());
     clearChannel(event.getChannelLeft().asVoiceChannel(), config);
-    // if (ChannelUtility.isCreationConditionMet(config, joinedChannel, parent)) {
-    // ChannelUtility.createChannel(parent, config, event.getGuild().getMaxBitrate());
-    // }
     createChannel(config, parent, joinedChannel, event.getGuild().getMaxBitrate());
   }
 
