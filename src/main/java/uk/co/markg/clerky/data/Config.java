@@ -2,8 +2,8 @@ package uk.co.markg.clerky.data;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -11,11 +11,11 @@ public class Config {
 
   private static final String FILENAME = "config.json";
 
-  @JsonProperty("server_configs")
-  private Map<Long, ServerConfig> serverConfigs;
+  @JsonProperty("server_config")
+  private List<ServerConfig> serverConfigs;
 
   public Config() {
-    serverConfigs = new HashMap<>();
+    serverConfigs = new ArrayList<>();
   }
 
   public static Config load() {
@@ -42,13 +42,21 @@ public class Config {
     }
   }
 
-  public void save(long serverid, ServerConfig config) {
-    serverConfigs.put(serverid, config);
+  public void addServerConfig(long serverid) {
+    serverConfigs.add(new ServerConfig(serverid, null));
+    saveConfig();
+  }
+
+  public void addVoiceGroup(long serverid, VoiceGroupConfig config) {
+    var serverConfig = get(serverid);
+    serverConfig.addVoiceGroupConfig(config);
     saveConfig();
   }
 
   public ServerConfig get(long serverid) {
-    return serverConfigs.get(serverid);
+    // TODO cleanup
+    return serverConfigs.stream().filter(config -> config.getServerId() == serverid).findFirst()
+        .orElse(null);
   }
 
 }

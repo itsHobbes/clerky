@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import uk.co.markg.clerky.data.Config;
-import uk.co.markg.clerky.data.ServerConfig;
+import uk.co.markg.clerky.data.VoiceGroupConfig;
 import uk.co.markg.clerky.listener.ChannelUtility;
 
 @CommandInfo(name = "addvoicegroup", description = "Add a voice group")
@@ -70,7 +70,8 @@ public class AddVoiceGroup implements Command {
     long serverid = event.getGuild().getIdLong();
 
     var config = Config.load();
-    config.save(serverid, new ServerConfig(categoryName, channel, maxUsers, maxChannels));
+    config.addVoiceGroup(serverid,
+        new VoiceGroupConfig(categoryName, channel, maxUsers, maxChannels));
 
     event.getHook().editOriginal("Config set").queue();
   }

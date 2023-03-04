@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
-import uk.co.markg.clerky.data.ServerConfig;
+import uk.co.markg.clerky.data.VoiceGroupConfig;
 
 public class ChannelUtility {
 
@@ -40,7 +40,7 @@ public class ChannelUtility {
     return sum;
   }
 
-  public static boolean isCreationConditionMet(ServerConfig config, VoiceChannel joinedChannel,
+  public static boolean isCreationConditionMet(VoiceGroupConfig config, VoiceChannel joinedChannel,
       Category parent) {
     int occupiedChannels = ChannelUtility.getOccupiedVoiceChannels(config.getChannelName(), parent);
     int totalExistingValidChannels = getValidChannelCount(config.getChannelName(), parent);
@@ -50,7 +50,7 @@ public class ChannelUtility {
         && totalExistingValidChannels - occupiedChannels == 0;
   }
 
-  public static void createChannel(Category parent, ServerConfig config, int bitRate) {
+  public static void createChannel(Category parent, VoiceGroupConfig config, int bitRate) {
     createChannel(parent, config.getChannelName(), config.getMaxUsers(), bitRate);
   }
 

@@ -1,57 +1,46 @@
 package uk.co.markg.clerky.data;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ServerConfig {
 
-  @JsonProperty("category_name")
-  private String categoryName;
+  @JsonProperty("id")
+  private long serverId;
 
-  @JsonProperty("channel_name")
-  private String channelName;
+  @JsonProperty("voice_config")
+  private List<VoiceGroupConfig> voiceConfig;
 
-  @JsonProperty("max_users")
-  private int maxUsers;
+  public ServerConfig() {}
 
-  @JsonProperty("max_voice_channels")
-  private int maxVoiceChannels;
-
-  public ServerConfig() {
-  }
-
-  public ServerConfig(String categoryName, String channelName, int maxUsers, int maxVoiceChannels) {
-    this.categoryName = categoryName;
-    this.channelName = channelName;
-    this.maxUsers = maxUsers;
-    this.maxVoiceChannels = maxVoiceChannels;
+  public ServerConfig(long serverId, List<VoiceGroupConfig> voiceConfig) {
+    this.serverId = serverId;
+    this.voiceConfig = voiceConfig;
   }
 
   /**
-   * @return the categoryName
+   * @return the serverId
    */
-  public String getCategoryName() {
-    return categoryName;
+  public long getServerId() {
+    return serverId;
   }
 
   /**
-   * @return the channelName
+   * @return the voiceConfig
    */
-  public String getChannelName() {
-    return channelName;
+  public List<VoiceGroupConfig> getVoiceConfig() {
+    return voiceConfig;
   }
 
-  /**
-   * @return the maxUsers
-   */
-  public int getMaxUsers() {
-    return maxUsers;
+  public List<VoiceGroupConfig> findVoiceGroupConfigByCategory(String categoryName) {
+    return voiceConfig.stream().filter(vc -> vc.getCategoryName().equals(categoryName)).toList();
   }
 
-  /**
-   * @return the maxVoiceChannels
-   */
-  public int getMaxVoiceChannels() {
-    return maxVoiceChannels;
+  public void addVoiceGroupConfig(VoiceGroupConfig config) {
+    if (voiceConfig == null) {
+      voiceConfig = new ArrayList<>();
+    }
+    voiceConfig.add(config);
   }
-
 }

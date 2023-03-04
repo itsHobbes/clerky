@@ -1,5 +1,6 @@
 package uk.co.markg.clerky.listener;
 
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
@@ -7,7 +8,7 @@ import net.dv8tion.jda.api.entities.channel.concrete.VoiceChannel;
 import net.dv8tion.jda.api.events.guild.voice.GuildVoiceUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import uk.co.markg.clerky.data.Config;
-import uk.co.markg.clerky.data.ServerConfig;
+import uk.co.markg.clerky.data.VoiceGroupConfig;
 
 public class VoiceListener extends ListenerAdapter {
 
@@ -26,43 +27,73 @@ public class VoiceListener extends ListenerAdapter {
   }
 
   private void joined(GuildVoiceUpdateEvent event) {
-    var config = Config.load().get(event.getGuild().getIdLong());
     var joinedChannel = event.getChannelJoined().asVoiceChannel();
     var parent = joinedChannel.getParentCategory();
+    if (parent == null) {
+      return;
+    }
+    var config = Config.load().get(event.getGuild().getIdLong())
+        .findVoiceGroupConfigByCategory(parent.getName());
 
     logger.info("Joined channel {}", joinedChannel.getName());
 
-    if (ChannelUtility.isCreationConditionMet(config, joinedChannel, parent)) {
-      ChannelUtility.createChannel(parent, config, event.getGuild().getMaxBitrate());
-    }
+    // if (ChannelUtility.isCreationConditionMet(config, joinedChannel, parent)) {
+    // ChannelUtility.createChannel(parent, config, event.getGuild().getMaxBitrate());
+    // }
+    createChannel(config, parent, joinedChannel, event.getGuild().getMaxBitrate());
   }
 
   private void left(GuildVoiceUpdateEvent event) {
     logger.info("Channel left");
-    var config = Config.load().get(event.getGuild().getIdLong());
+    var leftChannel = event.getChannelLeft().asVoiceChannel();
+    var parent = leftChannel.getParentCategory();
+    if (parent == null) {
+      return;
+    }
+    var config = Config.load().get(event.getGuild().getIdLong())
+        .findVoiceGroupConfigByCategory(parent.getName());
     clearChannel(event.getChannelLeft().asVoiceChannel(), config);
   }
 
   private void moved(GuildVoiceUpdateEvent event) {
     logger.info("Channel moved");
-    var config = Config.load().get(event.getGuild().getIdLong());
-    clearChannel(event.getChannelLeft().asVoiceChannel(), config);
     var joinedChannel = event.getChannelJoined().asVoiceChannel();
     var parent = joinedChannel.getParentCategory();
-    if (ChannelUtility.isCreationConditionMet(config, joinedChannel, parent)) {
-      ChannelUtility.createChannel(parent, config, event.getGuild().getMaxBitrate());
+    var config = Config.load().get(event.getGuild().getIdLong())
+        .findVoiceGroupConfigByCategory(parent.getName());
+    clearChannel(event.getChannelLeft().asVoiceChannel(), config);
+    // if (ChannelUtility.isCreationConditionMet(config, joinedChannel, parent)) {
+    // ChannelUtility.createChannel(parent, config, event.getGuild().getMaxBitrate());
+    // }
+    createChannel(config, parent, joinedChannel, event.getGuild().getMaxBitrate());
+  }
+
+  private void createChannel(List<VoiceGroupConfig> config, Category parent,
+      VoiceChannel joinedChannel, int maxBitrate) {
+    for (VoiceGroupConfig voiceGroupConfig : config) {
+      if (!voiceGroupConfig.getCategoryName().equals(parent.getName())) {
+        continue;
+      }
+      if (ChannelUtility.isCreationConditionMet(voiceGroupConfig, joinedChannel, parent)) {
+        ChannelUtility.createChannel(parent, voiceGroupConfig, maxBitrate);
+      }
     }
   }
 
-  private void clearChannel(VoiceChannel channelLeft, ServerConfig config) {
+  private void clearChannel(VoiceChannel channelLeft, List<VoiceGroupConfig> config) {
     var parent = channelLeft.getParentCategory();
-    if (isRemovalConditionMet(channelLeft, parent, config)) {
-      channelLeft.delete().queue();
+    for (VoiceGroupConfig voiceGroupConfig : config) {
+      if (!voiceGroupConfig.getCategoryName().equals(parent.getName())) {
+        continue;
+      }
+      if (isRemovalConditionMet(channelLeft, parent, voiceGroupConfig)) {
+        channelLeft.delete().queue();
+      }
     }
   }
 
   private boolean isRemovalConditionMet(VoiceChannel channelLeft, Category parent,
-      ServerConfig config) {
+      VoiceGroupConfig config) {
     // parent can be null if a user enters a voice channel that does not have a category.
     if (parent == null) {
       return false;

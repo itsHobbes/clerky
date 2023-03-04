@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 import org.reflections.Reflections;
+import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -14,6 +15,8 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import uk.co.markg.clerky.command.Command;
 import uk.co.markg.clerky.command.CommandInfo;
+import uk.co.markg.clerky.data.Config;
+import uk.co.markg.clerky.data.ServerConfig;
 import uk.co.markg.clerky.listener.MentionListener;
 import uk.co.markg.clerky.listener.SlashCommand;
 import uk.co.markg.clerky.listener.VoiceListener;
@@ -37,6 +40,17 @@ public class App {
 
     List<CommandData> commands = findSlashCommands(annotated);
     jda.updateCommands().addCommands(commands).queue();
+    createConfig(jda);
+  }
+
+  private static void createConfig(JDA jda) {
+    var config = Config.load();
+    jda.getGuilds().forEach(server -> {
+      var id = server.getIdLong();
+      if (config.get(id) == null) {
+        config.addServerConfig(id);
+      }
+    });
   }
 
   private static List<CommandData> findSlashCommands(Set<Class<?>> annotated) {
