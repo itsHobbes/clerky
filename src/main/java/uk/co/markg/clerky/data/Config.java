@@ -42,8 +42,12 @@ public class Config {
     }
   }
 
+  public void save() {
+    saveConfig();
+  }
+
   public void addServerConfig(long serverid) {
-    serverConfigs.add(new ServerConfig(serverid, null));
+    serverConfigs.add(new ServerConfig(serverid, new ArrayList<VoiceGroupConfig>()));
     saveConfig();
   }
 

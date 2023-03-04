@@ -1,6 +1,5 @@
 package uk.co.markg.clerky.listener;
 
-import java.util.EnumSet;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +9,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import uk.co.markg.clerky.command.AddVoiceGroup;
 import uk.co.markg.clerky.command.GiveawayStart;
 import uk.co.markg.clerky.command.ListVoiceGroup;
+import uk.co.markg.clerky.command.RemoveVoiceGroup;
 
 public class SlashCommand extends ListenerAdapter {
 
@@ -21,6 +21,7 @@ public class SlashCommand extends ListenerAdapter {
       case "addvoicegroup" -> new AddVoiceGroup();
       case "giveawaystart" -> new GiveawayStart();
       case "listvoicegroups" -> new ListVoiceGroup();
+      case "removevoicegroups" -> new RemoveVoiceGroup();
       default -> null;
     };
 
@@ -28,18 +29,25 @@ public class SlashCommand extends ListenerAdapter {
       logger.warn("{} triggered with no execution available", event.getName());
       return;
     }
-    logger.info("{} command triggered", command.getClass().getCanonicalName());
 
-    if (!hasPermission(event.getMember().getPermissions(), command.getPermissions())) {
-      event.reply("You don't have permission to use this command");
+    if (!hasPermission(event, command.getPermissions())) {
+      event.reply("You don't have permission to use this command").queue();
       return;
     }
 
+    logger.info("{} command triggered", command.getClass().getCanonicalName());
     command.execute(event);
   }
 
-  private boolean hasPermission(EnumSet<Permission> memberPermissions,
+  private boolean hasPermission(SlashCommandInteractionEvent event,
       List<Permission> commandPermissions) {
+    if (event.getMember() == null) {
+      return true;
+    }
+    if (commandPermissions.isEmpty()) {
+      return true;
+    }
+    var memberPermissions = event.getMember().getPermissions();
     boolean permissionFound = false;
     for (Permission memberPermission : memberPermissions) {
       for (Permission commandPermission : commandPermissions) {

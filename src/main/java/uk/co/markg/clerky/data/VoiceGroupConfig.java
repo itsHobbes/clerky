@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VoiceGroupConfig {
 
+  @JsonProperty("id")
+  private long id;
+
   @JsonProperty("category_name")
   private String categoryName;
 
@@ -18,12 +21,30 @@ public class VoiceGroupConfig {
 
   public VoiceGroupConfig() {}
 
-  public VoiceGroupConfig(String categoryName, String channelName, int maxUsers,
+  public VoiceGroupConfig(long id, String categoryName, String channelName, int maxUsers,
       int maxVoiceChannels) {
+    this.id = id;
     this.categoryName = categoryName;
     this.channelName = channelName;
     this.maxUsers = maxUsers;
     this.maxVoiceChannels = maxVoiceChannels;
+  }
+
+  public VoiceGroupConfig(String categoryName, String channelName, int maxUsers,
+      int maxVoiceChannels) {
+    this.id = System.currentTimeMillis();
+    this.categoryName = categoryName;
+    this.channelName = channelName;
+    this.maxUsers = maxUsers;
+    this.maxVoiceChannels = maxVoiceChannels;
+  }
+
+
+  /**
+   * @return the id
+   */
+  public long getId() {
+    return id;
   }
 
   /**

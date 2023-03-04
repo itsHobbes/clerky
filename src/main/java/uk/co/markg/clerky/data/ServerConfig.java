@@ -29,8 +29,17 @@ public class ServerConfig {
   /**
    * @return the voiceConfig
    */
-  public List<VoiceGroupConfig> getVoiceConfigs() {
+  public List<VoiceGroupConfig> getVoiceConfig() {
     return voiceConfig;
+  }
+
+  public void removeById(long id) {
+    var group = voiceConfig.stream().filter(vc -> vc.getId() == id).findFirst().orElse(null);
+    voiceConfig.remove(group);
+  }
+
+  public VoiceGroupConfig findById(long id) {
+    return voiceConfig.stream().filter(vc -> vc.getId() == id).findFirst().orElse(null);
   }
 
   public List<VoiceGroupConfig> findVoiceGroupConfigByCategory(String categoryName) {

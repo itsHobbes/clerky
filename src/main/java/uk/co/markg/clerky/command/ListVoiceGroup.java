@@ -13,8 +13,13 @@ public class ListVoiceGroup implements Command {
     event.deferReply().queue();
     var id = event.getGuild().getIdLong();
     var sb = new StringBuilder();
-    System.out.println("test");
-    Config.load().get(id).getVoiceConfigs().forEach(config -> {
+    var voiceConfigs = Config.load().get(id).getVoiceConfig();
+    if (voiceConfigs.isEmpty()) {
+      event.getHook().editOriginal("There are no voice groups.").queue();
+      return;
+    }
+    voiceConfigs.forEach(config -> {
+      sb.append("**ID:** " + config.getId()).append(System.lineSeparator());
       sb.append("**Category:** " + config.getCategoryName()).append(System.lineSeparator());
       sb.append("**Channel:** " + config.getChannelName()).append(System.lineSeparator());
       sb.append("**Max Users:** " + config.getMaxUsers()).append(System.lineSeparator());
