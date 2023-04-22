@@ -3,6 +3,7 @@ package uk.co.markg.clerky.data;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +56,14 @@ public class Config {
     var serverConfig = get(serverid);
     serverConfig.addVoiceGroupConfig(config);
     saveConfig();
+  }
+
+  public List<VoiceGroupConfig> getVoiceGroups(long serverid) {
+    var sConfig = get(serverid);
+    if (sConfig == null) {
+      return Collections.emptyList();
+    }
+    return sConfig.getVoiceConfig();
   }
 
   public ServerConfig get(long serverid) {

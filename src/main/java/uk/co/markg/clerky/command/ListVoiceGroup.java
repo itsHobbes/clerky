@@ -13,7 +13,7 @@ public class ListVoiceGroup implements Command {
     event.deferReply().queue();
     var id = event.getGuild().getIdLong();
     var sb = new StringBuilder();
-    var voiceConfigs = Config.load().get(id).getVoiceConfig();
+    var voiceConfigs = Config.load().getVoiceGroups(id);
     if (voiceConfigs.isEmpty()) {
       event.getHook().editOriginal("There are no voice groups.").queue();
       return;
