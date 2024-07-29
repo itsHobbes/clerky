@@ -13,7 +13,7 @@ import uk.co.markg.clerky.data.Config;
 import uk.co.markg.clerky.data.VoiceGroupConfig;
 import uk.co.markg.clerky.listener.ChannelUtility;
 
-@CommandInfo(name = "addvoicegroup", description = "Add a voice group")
+@CommandInfo(name = "clerky-addvoicegroup", description = "Add a voice group")
 public class AddVoiceGroup implements Command {
 
   private static final String USER_ERROR =

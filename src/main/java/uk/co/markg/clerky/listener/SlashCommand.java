@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import uk.co.markg.clerky.command.AddVoiceGroup;
-import uk.co.markg.clerky.command.GiveawayStart;
 import uk.co.markg.clerky.command.ListVoiceGroup;
 import uk.co.markg.clerky.command.RemoveVoiceGroup;
 
@@ -19,7 +18,6 @@ public class SlashCommand extends ListenerAdapter {
   public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
     var command = switch (event.getName()) {
       case "addvoicegroup" -> new AddVoiceGroup();
-      case "giveawaystart" -> new GiveawayStart();
       case "listvoicegroups" -> new ListVoiceGroup();
       case "removevoicegroups" -> new RemoveVoiceGroup();
       default -> null;

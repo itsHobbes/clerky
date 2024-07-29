@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import uk.co.markg.clerky.data.Config;
 
-@CommandInfo(name = "removevoicegroups", description = "List all voice groups.")
+@CommandInfo(name = "clerky-removevoicegroups", description = "List all voice groups.")
 public class RemoveVoiceGroup implements Command {
 
   private static final String ID_ARG = "id";
