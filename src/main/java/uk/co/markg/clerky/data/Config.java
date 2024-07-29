@@ -48,7 +48,8 @@ public class Config {
   }
 
   public void addServerConfig(long serverid) {
-    serverConfigs.add(new ServerConfig(serverid, new ArrayList<VoiceGroupConfig>()));
+    serverConfigs.add(
+        new ServerConfig(serverid, new ArrayList<VoiceGroupConfig>()));
     saveConfig();
   }
 
@@ -71,5 +72,4 @@ public class Config {
     return serverConfigs.stream().filter(config -> config.getServerId() == serverid).findFirst()
         .orElse(null);
   }
-
 }

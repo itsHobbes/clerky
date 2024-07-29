@@ -32,8 +32,8 @@ public class VoiceListener extends ListenerAdapter {
     if (parent == null) {
       return;
     }
-    var config = Config.load().get(event.getGuild().getIdLong())
-        .findVoiceGroupConfigByCategory(parent.getName());
+    var config =
+        Config.load().get(event.getGuild().getIdLong()).findVoiceGroupConfig(parent.getName());
 
     logger.info("Joined channel {}", joinedChannel.getName());
 
@@ -47,8 +47,8 @@ public class VoiceListener extends ListenerAdapter {
     if (parent == null) {
       return;
     }
-    var config = Config.load().get(event.getGuild().getIdLong())
-        .findVoiceGroupConfigByCategory(parent.getName());
+    var config =
+        Config.load().get(event.getGuild().getIdLong()).findVoiceGroupConfig(parent.getName());
     clearChannel(event.getChannelLeft().asVoiceChannel(), config);
   }
 
@@ -56,8 +56,8 @@ public class VoiceListener extends ListenerAdapter {
     logger.info("Channel moved");
     var joinedChannel = event.getChannelJoined().asVoiceChannel();
     var parent = joinedChannel.getParentCategory();
-    var config = Config.load().get(event.getGuild().getIdLong())
-        .findVoiceGroupConfigByCategory(parent.getName());
+    var config =
+        Config.load().get(event.getGuild().getIdLong()).findVoiceGroupConfig(parent.getName());
     clearChannel(event.getChannelLeft().asVoiceChannel(), config);
     createChannel(config, parent, joinedChannel, event.getGuild().getMaxBitrate());
   }

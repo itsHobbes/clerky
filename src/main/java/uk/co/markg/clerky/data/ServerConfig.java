@@ -33,16 +33,16 @@ public class ServerConfig {
     return voiceConfig;
   }
 
-  public void removeById(long id) {
+  public void removeVoiceConfig(long id) {
     var group = voiceConfig.stream().filter(vc -> vc.getId() == id).findFirst().orElse(null);
     voiceConfig.remove(group);
   }
 
-  public VoiceGroupConfig findById(long id) {
+  public VoiceGroupConfig findVoiceConfig(long id) {
     return voiceConfig.stream().filter(vc -> vc.getId() == id).findFirst().orElse(null);
   }
 
-  public List<VoiceGroupConfig> findVoiceGroupConfigByCategory(String categoryName) {
+  public List<VoiceGroupConfig> findVoiceGroupConfig(String categoryName) {
     return voiceConfig.stream().filter(vc -> vc.getCategoryName().equals(categoryName)).toList();
   }
 

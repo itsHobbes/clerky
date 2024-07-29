@@ -20,12 +20,12 @@ public class RemoveVoiceGroup implements Command {
       var id = Long.parseLong(event.getOption(ID_ARG, OptionMapping::getAsString));
       var config = Config.load();
       var serverConfig = config.get(event.getGuild().getIdLong());
-      var voiceGroup = serverConfig.findById(id);
+      var voiceGroup = serverConfig.findVoiceConfig(id);
       if (voiceGroup == null) {
         event.reply("Invalid ID").queue();
         return;
       }
-      serverConfig.removeById(id);
+      serverConfig.removeVoiceConfig(id);
       config.save();
       event.reply("Voice Group removed").queue();
     } catch (NumberFormatException e) {
