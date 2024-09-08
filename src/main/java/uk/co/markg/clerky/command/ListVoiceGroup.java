@@ -5,7 +5,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import uk.co.markg.clerky.data.Config;
 
-@CommandInfo(name = "clerky-listvoicegroups", description = "List all voice groups.")
+@CommandInfo(name = "listvoicegroups", description = "List all voice groups.")
 public class ListVoiceGroup implements Command {
 
   @Override

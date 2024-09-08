@@ -22,7 +22,7 @@ import uk.co.markg.clerky.listener.VoiceListener;
 
 public class App {
 
-  public static final String PREFIX = "clerky!";
+  public static final String PREFIX = "clerky-";
 
   public static void main(String[] args) throws Exception {
 
@@ -60,7 +60,7 @@ public class App {
         var commandData = commandClass.getAnnotation(CommandInfo.class);
         Command command = commandClass.getDeclaredConstructor().newInstance();
 
-        var commandBuilder = Commands.slash(commandData.name(), commandData.description())
+        var commandBuilder = Commands.slash(PREFIX + commandData.name(), commandData.description())
             .setGuildOnly(commandData.guildOnly())
             .setDefaultPermissions(command.definePermissions());
 

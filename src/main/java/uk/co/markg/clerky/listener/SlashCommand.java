@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import uk.co.markg.clerky.App;
 import uk.co.markg.clerky.command.AddVoiceGroup;
 import uk.co.markg.clerky.command.ListVoiceGroup;
 import uk.co.markg.clerky.command.RemoveVoiceGroup;
@@ -16,7 +17,8 @@ public class SlashCommand extends ListenerAdapter {
 
   @Override
   public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-    var command = switch (event.getName()) {
+    logger.info(event.getName());
+    var command = switch (event.getName().replace(App.PREFIX, "")) {
       case "addvoicegroup" -> new AddVoiceGroup();
       case "listvoicegroups" -> new ListVoiceGroup();
       case "removevoicegroups" -> new RemoveVoiceGroup();
