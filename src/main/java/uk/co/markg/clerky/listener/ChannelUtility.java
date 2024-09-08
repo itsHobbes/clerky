@@ -56,8 +56,14 @@ public class ChannelUtility {
 
   public static void createChannel(Category parent, String channelName, int maxUsers, int bitRate) {
     logger.info("Creating channel {}", channelName);
-    parent.createVoiceChannel(channelName).setUserlimit(maxUsers).setBitrate(bitRate)
-        .syncPermissionOverrides().queue();
+    parent
+        .createVoiceChannel(channelName)
+        .setUserlimit(maxUsers)
+        .setBitrate(bitRate)
+        .syncPermissionOverrides()
+        .queue(null, e -> {
+          logger.info("Error creating channel {}", e.getMessage());
+        });
   }
 
 }
