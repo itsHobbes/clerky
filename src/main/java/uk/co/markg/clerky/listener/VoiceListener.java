@@ -81,6 +81,7 @@ public class VoiceListener extends ListenerAdapter {
         continue;
       }
       if (isRemovalConditionMet(channelLeft, parent, voiceGroupConfig)) {
+        logger.info("Removing channel {}", channelLeft.getId());
         channelLeft.delete().queue();
       }
     }

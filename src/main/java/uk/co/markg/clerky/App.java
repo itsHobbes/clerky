@@ -73,7 +73,7 @@ public class App {
         var old = mapper.readValue(new File("config.json"), OldConfig.class);
         var newConfig = new Config();
         for (Entry<Long, OldServerConfig> entry : old.getAll().entrySet()) {
-          logger.info("Creating new config for " + entry.getKey());
+          logger.info("Creating new config for {}", entry.getKey());
           long serverId = entry.getKey();
           var voiceConfig = entry.getValue();
           var vcg = new VoiceGroupConfig(voiceConfig.getCategoryName(), voiceConfig.getChannelName(),
