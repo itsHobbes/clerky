@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Config {
 
-  private static final String FILENAME = "config.json";
+  private static final String FILENAME = "clerky.json";
 
   @JsonProperty("server_config")
   private List<ServerConfig> serverConfigs;
@@ -24,7 +24,7 @@ public class Config {
     if (file.exists()) {
       var mapper = new ObjectMapper();
       try {
-        return mapper.readValue(new File("config.json"), Config.class);
+        return mapper.readValue(new File(FILENAME), Config.class);
       } catch (Exception e) {
         e.printStackTrace();
         return new Config();
