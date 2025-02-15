@@ -19,24 +19,29 @@ public class VoiceGroupConfig {
   @JsonProperty("max_voice_channels")
   private int maxVoiceChannels;
 
+  @JsonProperty("adjustable_size")
+  private boolean adjustableSize;
+
   public VoiceGroupConfig() {}
 
   public VoiceGroupConfig(long id, String categoryName, String channelName, int maxUsers,
-      int maxVoiceChannels) {
+      int maxVoiceChannels, boolean adjustableSize) {
     this.id = id;
     this.categoryName = categoryName;
     this.channelName = channelName;
     this.maxUsers = maxUsers;
     this.maxVoiceChannels = maxVoiceChannels;
+    this.adjustableSize = adjustableSize;
   }
 
   public VoiceGroupConfig(String categoryName, String channelName, int maxUsers,
-      int maxVoiceChannels) {
+      int maxVoiceChannels, boolean adjustableSize) {
     this.id = System.currentTimeMillis();
     this.categoryName = categoryName;
     this.channelName = channelName;
     this.maxUsers = maxUsers;
     this.maxVoiceChannels = maxVoiceChannels;
+    this.adjustableSize = adjustableSize;
   }
 
 
@@ -73,6 +78,17 @@ public class VoiceGroupConfig {
    */
   public int getMaxVoiceChannels() {
     return maxVoiceChannels;
+  }
+
+  public boolean isAdjustableSize() {
+    return adjustableSize;
+  }
+
+  /**
+   * @param maxUsers the maxUsers to set
+   */
+  public void setMaxUsers(int maxUsers) {
+    this.maxUsers = maxUsers;
   }
 
 }

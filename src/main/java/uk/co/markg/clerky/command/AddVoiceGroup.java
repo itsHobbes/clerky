@@ -24,6 +24,7 @@ public class AddVoiceGroup implements Command {
   private static final String CHANNEL_ARG = "channel";
   private static final String MAX_USERS_ARG = "maxusers";
   private static final String MAX_CHANNELS_ARG = "maxchannels";
+  private static final String ADJUSTABLE_ARG = "adjustablesize";
 
   @Override
   public List<Permission> getPermissions() {
@@ -41,6 +42,8 @@ public class AddVoiceGroup implements Command {
         "The max number of users per voice channel", true));
     options.add(
         new OptionData(OptionType.STRING, MAX_CHANNELS_ARG, "The max number of channels", true));
+    options.add(
+        new OptionData(OptionType.BOOLEAN, ADJUSTABLE_ARG, "Whether users can adjust the size of the channel", false));
     return options;
   }
 
@@ -50,6 +53,9 @@ public class AddVoiceGroup implements Command {
     var channel = event.getOption(CHANNEL_ARG, OptionMapping::getAsString);
     var maxUsers = event.getOption(MAX_USERS_ARG, OptionMapping::getAsInt);
     var maxChannels = event.getOption(MAX_CHANNELS_ARG, OptionMapping::getAsInt);
+    var adjustable = event.getOption(ADJUSTABLE_ARG, OptionMapping::getAsBoolean);
+
+    adjustable = adjustable == null ? false : adjustable;
 
     if (maxUsers > 99 || maxUsers <= 0) {
       event.reply(USER_ERROR).queue();
@@ -71,7 +77,7 @@ public class AddVoiceGroup implements Command {
 
     var config = Config.load();
     config.addVoiceGroup(serverid,
-        new VoiceGroupConfig(categoryName, channel, maxUsers, maxChannels));
+        new VoiceGroupConfig(categoryName, channel, maxUsers, maxChannels, adjustable));
 
     event.getHook().editOriginal("Config set").queue();
   }

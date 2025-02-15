@@ -77,7 +77,7 @@ public class App {
           long serverId = entry.getKey();
           var voiceConfig = entry.getValue();
           var vcg = new VoiceGroupConfig(voiceConfig.getCategoryName(), voiceConfig.getChannelName(),
-              voiceConfig.getMaxUsers(), voiceConfig.getMaxVoiceChannels());
+              voiceConfig.getMaxUsers(), voiceConfig.getMaxVoiceChannels(), false);
           newConfig.addServerConfig(serverId);
           newConfig.addVoiceGroup(serverId, vcg);
         }

@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import uk.co.markg.clerky.App;
 import uk.co.markg.clerky.command.AddVoiceGroup;
+import uk.co.markg.clerky.command.AlterVoiceGroupSize;
 import uk.co.markg.clerky.command.ListVoiceGroup;
 import uk.co.markg.clerky.command.RemoveVoiceGroup;
 
@@ -22,6 +23,7 @@ public class SlashCommand extends ListenerAdapter {
       case "addvoicegroup" -> new AddVoiceGroup();
       case "listvoicegroups" -> new ListVoiceGroup();
       case "removevoicegroups" -> new RemoveVoiceGroup();
+      case "size" -> new AlterVoiceGroupSize();
       default -> null;
     };
 
