@@ -12,9 +12,13 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import uk.co.markg.clerky.data.Config;
 import uk.co.markg.clerky.data.VoiceGroupConfig;
 import uk.co.markg.clerky.listener.ChannelUtility;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @CommandInfo(name = "addvoicegroup", description = "Add a voice group")
 public class AddVoiceGroup implements Command {
+
+  private static final Logger logger = LogManager.getLogger(ChannelUtility.class);
 
   private static final String USER_ERROR =
       "Max users must be greater than 0 and less than or equal to 99";
@@ -102,6 +106,7 @@ public class AddVoiceGroup implements Command {
         return Optional.of(cat);
       }
     }
+    logger.info("Category not found");
     return Optional.empty();
   }
 }

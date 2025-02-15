@@ -61,7 +61,7 @@ public class ChannelUtility {
         .setUserlimit(maxUsers)
         .setBitrate(bitRate)
         .syncPermissionOverrides()
-        .queue(null, e -> {
+        .queue((channel) -> logger.info("Created channel successfully"), e -> {
           logger.info("Error creating channel {}", e.getMessage());
         });
   }
