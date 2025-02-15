@@ -36,8 +36,6 @@ public class App {
 
   public static void main(String[] args) throws Exception {
 
-    portOldConfig();
-
     var builder = JDABuilder.create(System.getenv("CLERKY_TOKEN"), getIntents());
     builder.addEventListeners(new VoiceListener(), new MentionListener(), new SlashCommand());
     builder.disableCache(getFlags());
@@ -62,29 +60,6 @@ public class App {
         config.addServerConfig(id);
       }
     });
-  }
-
-  private static void portOldConfig() {
-    File file = new File("config.json");
-    logger.info("Found old config");
-    if (file.exists()) {
-      var mapper = new ObjectMapper();
-      try {
-        var old = mapper.readValue(new File("config.json"), OldConfig.class);
-        var newConfig = new Config();
-        for (Entry<Long, OldServerConfig> entry : old.getAll().entrySet()) {
-          logger.info("Creating new config for {}", entry.getKey());
-          long serverId = entry.getKey();
-          var voiceConfig = entry.getValue();
-          var vcg = new VoiceGroupConfig(voiceConfig.getCategoryName(), voiceConfig.getChannelName(),
-              voiceConfig.getMaxUsers(), voiceConfig.getMaxVoiceChannels(), false);
-          newConfig.addServerConfig(serverId);
-          newConfig.addVoiceGroup(serverId, vcg);
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
   }
 
   private static List<CommandData> findSlashCommands(Set<Class<?>> annotated) {
