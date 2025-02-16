@@ -35,8 +35,8 @@ public class StickyChannel implements Command {
       }
 
       if (!channel.getName().equals(voiceGroupConfig.getChannelName())) {
-        event.getHook().editOriginal("This channel is not managed by clerky.").queue();
-        return;
+        // event.getHook().editOriginal("This channel is not managed by clerky.").queue();
+        continue;
       }
 
       long serverId = event.getGuild().getIdLong();
