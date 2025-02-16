@@ -81,27 +81,35 @@ public class VoiceListener extends ListenerAdapter {
         continue;
       }
       if (isRemovalConditionMet(channelLeft, parent, voiceGroupConfig)) {
+        if (Config.load().isStickyChannel(channelLeft.getGuild().getIdLong(), channelLeft.getIdLong())) {
+          continue;
+        }
         logger.info("Removing channel {}", channelLeft.getId());
         channelLeft.delete().queue();
         return;
       }
     }
-    // System.out.println("test");
-    // for (var channel : parent.getVoiceChannels()) {
-    //   if (!channel.getName().equals(channelLeft.getName())) {
-    //     continue;
-    //   }
+    
+    for (var channel : parent.getVoiceChannels()) {
+      if (!channel.getName().equals(channelLeft.getName())) {
+        continue;
+      }
 
-    //   if (channel.getMembers().size() != 0) {
-    //     continue;
-    //   }
+      if (channel.getIdLong() == channelLeft.getIdLong()) {
+        continue;
+      }
 
-    //   if (Config.load().isStickyChannel(channelLeft.getGuild().getIdLong(), channel.getIdLong())) {
-    //     continue;
-    //   }
-    //   logger.info("Removing channel {}", channel.getId());
-    //   channel.delete().queue();
-    // }
+      if (channel.getMembers().size() != 0) {
+        continue;
+      }
+
+      if (Config.load().isStickyChannel(channelLeft.getGuild().getIdLong(), channel.getIdLong())) {
+        continue;
+      }
+      
+      logger.info("Removing channel {}", channel.getId());
+      channel.delete().queue();
+    }
   }
 
   private boolean isRemovalConditionMet(VoiceChannel channelLeft, Category parent,
@@ -115,7 +123,6 @@ public class VoiceListener extends ListenerAdapter {
     return channelLeft.getName().equals(config.getChannelName())
         && channelLeft.getMembers().isEmpty() && allChannels > 1
         && parent.getName().equals(config.getCategoryName()) && occupiedChannels <= allChannels - 2;
-        // && !Config.load().isStickyChannel(channelLeft.getGuild().getIdLong(), channelLeft.getIdLong());
   }
 
 }
