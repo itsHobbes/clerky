@@ -83,7 +83,24 @@ public class VoiceListener extends ListenerAdapter {
       if (isRemovalConditionMet(channelLeft, parent, voiceGroupConfig)) {
         logger.info("Removing channel {}", channelLeft.getId());
         channelLeft.delete().queue();
+        return;
       }
+    }
+
+    for (var channel : parent.getVoiceChannels()) {
+      if (!channel.getName().equals(channelLeft.getName())) {
+        continue;
+      }
+
+      if (channel.getMembers().size() != 0) {
+        continue;
+      }
+
+      if (Config.load().isStickyChannel(channelLeft.getGuild().getIdLong(), channel.getIdLong())) {
+        continue;
+      }
+      logger.info("Removing channel {}", channel.getId());
+      channel.delete().queue();
     }
   }
 
@@ -97,7 +114,8 @@ public class VoiceListener extends ListenerAdapter {
     int occupiedChannels = ChannelUtility.getOccupiedVoiceChannels(config.getChannelName(), parent);
     return channelLeft.getName().equals(config.getChannelName())
         && channelLeft.getMembers().isEmpty() && allChannels > 1
-        && parent.getName().equals(config.getCategoryName()) && occupiedChannels <= allChannels - 2;
+        && parent.getName().equals(config.getCategoryName()) && occupiedChannels <= allChannels - 2
+        && !Config.load().isStickyChannel(channelLeft.getGuild().getIdLong(), channelLeft.getIdLong());
   }
 
 }

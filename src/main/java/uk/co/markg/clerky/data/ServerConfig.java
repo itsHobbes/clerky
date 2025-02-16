@@ -12,11 +12,15 @@ public class ServerConfig {
   @JsonProperty("voice_config")
   private List<VoiceGroupConfig> voiceConfig;
 
+  @JsonProperty("sticky_channels")
+  private List<Long> stickyChannels;
+
   public ServerConfig() {}
 
-  public ServerConfig(long serverId, List<VoiceGroupConfig> voiceConfig) {
+  public ServerConfig(long serverId, List<VoiceGroupConfig> voiceConfig, List<Long> channels) {
     this.serverId = serverId;
     this.voiceConfig = voiceConfig;
+    this.stickyChannels = channels;
   }
 
   /**
@@ -31,6 +35,13 @@ public class ServerConfig {
    */
   public List<VoiceGroupConfig> getVoiceConfig() {
     return voiceConfig;
+  }
+
+  /**
+   * @return the stickyChannels
+   */
+  public List<Long> getStickyChannels() {
+    return stickyChannels;
   }
 
   public void removeVoiceConfig(long id) {
@@ -51,5 +62,32 @@ public class ServerConfig {
       voiceConfig = new ArrayList<>();
     }
     voiceConfig.add(config);
+  }
+
+  public void addStickyChannel(long channelId) {
+    boolean found = false;
+    for (long stickyChannel : stickyChannels) {
+      if (channelId == stickyChannel) {
+        found = true;
+        break;
+      }
+    }
+    if (found) {
+      return;
+    }
+    stickyChannels.add(channelId);
+  }
+
+  public void removeStickyChannel(long channelId) {
+    stickyChannels.remove(channelId);
+  }
+
+  public boolean isStickyChannel(long channelId) {
+    for (long stickyChannel : stickyChannels) {
+      if (channelId == stickyChannel) {
+        return true;
+      }
+    }
+    return false;
   }
 }

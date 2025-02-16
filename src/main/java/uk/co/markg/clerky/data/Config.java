@@ -49,7 +49,7 @@ public class Config {
 
   public void addServerConfig(long serverid) {
     serverConfigs.add(
-        new ServerConfig(serverid, new ArrayList<VoiceGroupConfig>()));
+        new ServerConfig(serverid, new ArrayList<VoiceGroupConfig>(), new ArrayList<Long>()));
     saveConfig();
   }
 
@@ -72,4 +72,22 @@ public class Config {
     return serverConfigs.stream().filter(config -> config.getServerId() == serverid).findFirst()
         .orElse(null);
   }
+
+  public void addStickyChannel(long serverid, long channelId) {
+    var serverConfig = get(serverid);
+    serverConfig.addStickyChannel(channelId);
+    saveConfig();
+  }
+
+  public boolean isStickyChannel(long serverid, long channelId) {
+    var serverConfig = get(serverid);
+    return serverConfig.isStickyChannel(channelId);
+  }
+
+  public void removeStickyChannel(long serverid, long channelId) {
+    var serverConfig = get(serverid);
+    serverConfig.removeStickyChannel(channelId);
+    saveConfig();
+  }
+
 }

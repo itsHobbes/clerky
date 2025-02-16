@@ -11,6 +11,7 @@ import uk.co.markg.clerky.command.AddVoiceGroup;
 import uk.co.markg.clerky.command.AlterVoiceGroupSize;
 import uk.co.markg.clerky.command.ListVoiceGroup;
 import uk.co.markg.clerky.command.RemoveVoiceGroup;
+import uk.co.markg.clerky.command.StickyChannel;
 
 public class SlashCommand extends ListenerAdapter {
 
@@ -24,6 +25,7 @@ public class SlashCommand extends ListenerAdapter {
       case "listvoicegroups" -> new ListVoiceGroup();
       case "removevoicegroups" -> new RemoveVoiceGroup();
       case "size" -> new AlterVoiceGroupSize();
+      case "sticky" -> new StickyChannel();
       default -> null;
     };
 
