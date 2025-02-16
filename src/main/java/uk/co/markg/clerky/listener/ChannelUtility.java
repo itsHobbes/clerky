@@ -56,12 +56,23 @@ public class ChannelUtility {
 
   public static void createChannel(Category parent, String channelName, int maxUsers, int bitRate) {
     logger.info("Creating channel {}", channelName);
+
+    var afkChannel = parent.getGuild().getAfkChannel();
+    long afkId = afkChannel.getIdLong();
+    boolean parentContainsAfk = false;
+    for (var channel : parent.getVoiceChannels()) {
+      if (channel.getIdLong() == afkId) {
+        parentContainsAfk = true;
+      }
+    }
+
     parent
         .createVoiceChannel(channelName)
         .setUserlimit(maxUsers)
         .setBitrate(bitRate)
+        .setPosition(parentContainsAfk ? afkChannel.getPositionRaw() - 1 : null)
         .syncPermissionOverrides()
-        .queue((channel) -> logger.info("Created channel successfully"),
+        .queue((channel) -> logger.info("Created channel successfully at position {}", channel.getPositionRaw()),
             e -> logger.info("Error creating channel {}", e.getMessage()));
     logger.info("Channel created successfully");
   }
