@@ -44,8 +44,7 @@ public class AlterVoiceGroupSize implements Command {
       }
 
       if (!channel.getName().equals(voiceGroupConfig.getChannelName())) {
-        event.getHook().editOriginal("This channel is not managed by clerky.").queue();
-        return;
+        continue;
       }
 
       var channelMembers = channel.getMembers();
@@ -79,7 +78,7 @@ public class AlterVoiceGroupSize implements Command {
       return;
     }
 
-    event.getHook().editOriginal("Something went wrong").queue();
+    event.getHook().editOriginal("Something went wrong, this channel may not be managed by clerky.").queue();
 
   }
 }
